@@ -46,6 +46,8 @@
 
   <!-- ============ PRELOADER ============ -->
   <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__panel loader__panel--top"></div>
+    <div class="loader__panel loader__panel--bottom"></div>
     <div class="loader__ring">
       <svg viewBox="0 0 120 120"><circle class="loader__track" cx="60" cy="60" r="54"/><circle class="loader__bar" id="loaderBar" cx="60" cy="60" r="54"/></svg>
       <img src="assets/logo.webp" alt="" width="96" height="96">
@@ -54,7 +56,19 @@
     <div class="loader__pct" id="loaderPct">0</div>
   </div>
 
-  <div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
+  <div class="cursor" id="cursor" aria-hidden="true"><span></span><em id="cursorLabel"></em></div>
+
+  <nav class="dots" id="dots" aria-label="Sezioni">
+    <a href="#top" data-label="Home"></a>
+    <a href="#manifesto" data-label="Manifesto"></a>
+    <a href="#chi-sono" data-label="Chi sono"></a>
+    <a href="#sede" data-label="La sede"></a>
+    <a href="#metodo" data-label="Metodo"></a>
+    <a href="#servizi" data-label="Servizi"></a>
+    <a href="#percorso" data-label="Percorso"></a>
+    <a href="#faq" data-label="FAQ"></a>
+    <a href="#contatti" data-label="Contatti"></a>
+  </nav>
   <div class="progress" id="progress" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
@@ -82,7 +96,7 @@
   <main id="top">
 
     <!-- ============ HERO ============ -->
-    <section class="hero" id="hero">
+    <section class="hero" id="hero" data-section>
       <div class="hero__fallback" aria-hidden="true"><img src="assets/logo.webp" alt=""></div>
       <div class="hero__inner container">
         <p class="eyebrow reveal-up"><span class="dot"></span> Nuova sede · Via Trieste 62 · Cesarò</p>
@@ -97,7 +111,7 @@
           <a href="#contatti" class="btn btn--ghost magnetic"><span>Prenota il tuo posto</span></a>
         </div>
         <ul class="hero__stats reveal-up" aria-label="I punti di forza">
-          <li><b>4</b><span>Aree dedicate</span></li>
+          <li><b data-count="4">4</b><span>Aree dedicate</span></li>
           <li><b>1:1</b><span>Percorsi su misura</span></li>
           <li><b>Su prenotazione</b><span>Zero sovraffollamento</span></li>
         </ul>
@@ -113,11 +127,33 @@
       </div>
     </div>
 
+
+    <!-- ============ MANIFESTO (pinned, 3D exploded view) ============ -->
+    <section class="manifesto" id="manifesto" aria-label="Il credo di A.C.">
+      <div class="manifesto__pin">
+        <div class="manifesto__words">
+          <div class="mword"><span class="mword__big" data-split>Disciplina</span><p>Ogni giorno, anche quando nessuno ti guarda.</p></div>
+          <div class="mword"><span class="mword__big" data-split>Forza</span><p>Si costruisce una ripetizione alla volta.</p></div>
+          <div class="mword"><span class="mword__big" data-split>Risultati</span><p>Concreti, misurabili, tuoi.</p></div>
+        </div>
+        <div class="manifesto__spec" aria-hidden="true">
+          <span class="spec spec--a"><i></i>Dischi in oro</span>
+          <span class="spec spec--b"><i></i>Impugnatura zigrinata</span>
+          <span class="spec spec--c"><i></i>Anello dello scudo</span>
+        </div>
+        <div class="manifesto__hud" aria-hidden="true">
+          <span class="manifesto__count"><b id="mCount">01</b> / 03</span>
+          <span class="manifesto__bar"><i id="mBar"></i></span>
+          <span>Il credo A·C</span>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ CHI SONO ============ -->
     <section class="section about" id="chi-sono">
       <div class="container about__grid">
         <div class="about__visual">
-          <div class="coin tilt" data-tilt-max="14" id="coin">
+          <div class="coin tilt" data-tilt-max="14" id="coin" data-cursor="Gira">
             <div class="coin__inner">
               <div class="coin__face coin__front"><img src="assets/logo.webp" alt="Logo A.C. Personal Trainer: guerriero spartano con manubrio" width="720" height="720" loading="lazy"></div>
               <div class="coin__face coin__back">
@@ -139,9 +175,9 @@
           <p class="reveal-up">Qui al centro ci sei tu. Non solo il fisico, ma anche il benessere e la salute: ogni percorso è costruito sui tuoi obiettivi e ti seguo in prima persona, dalla prima consulenza fino al traguardo.</p>
           <blockquote class="quote reveal-up">“Allenarci, crescere e stare bene insieme.”</blockquote>
           <ul class="pillars">
-            <li class="pillar reveal-up"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3z"/></svg></span><div><h3>Disciplina</h3><p>Un piano chiaro, obiettivi misurabili e niente improvvisazione.</p></div></li>
-            <li class="pillar reveal-up"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10h2v4H3zM19 10h2v4h-2zM6 7h2v10H6zM16 7h2v10h-2zM8 11h8v2H8z"/></svg></span><div><h3>Forza</h3><p>Tecnica corretta, progressione dei carichi, risultati che durano.</p></div></li>
-            <li class="pillar reveal-up"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-9C1.2 8.8 3 5 6.5 5c2 0 3.5 1.2 5.5 3.3C14 6.2 15.5 5 17.5 5 21 5 22.8 8.8 21.3 12 19 16.6 12 21 12 21z"/></svg></span><div><h3>Benessere</h3><p>Allenarsi per stare meglio, dentro e fuori dalla palestra.</p></div></li>
+            <li class="pillar"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3z"/></svg></span><div><h3>Disciplina</h3><p>Un piano chiaro, obiettivi misurabili e niente improvvisazione.</p></div></li>
+            <li class="pillar"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10h2v4H3zM19 10h2v4h-2zM6 7h2v10H6zM16 7h2v10h-2zM8 11h8v2H8z"/></svg></span><div><h3>Forza</h3><p>Tecnica corretta, progressione dei carichi, risultati che durano.</p></div></li>
+            <li class="pillar"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-9C1.2 8.8 3 5 6.5 5c2 0 3.5 1.2 5.5 3.3C14 6.2 15.5 5 17.5 5 21 5 22.8 8.8 21.3 12 19 16.6 12 21 12 21z"/></svg></span><div><h3>Benessere</h3><p>Allenarsi per stare meglio, dentro e fuori dalla palestra.</p></div></li>
           </ul>
         </div>
       </div>
@@ -157,7 +193,7 @@
         </header>
 
         <div class="venue__grid">
-          <div class="plan" id="plan" aria-hidden="true">
+          <div class="plan" id="plan" aria-hidden="true" data-cursor="Esplora">
             <div class="plan__floor">
               <div class="zone" data-zone="pesi"><span class="zone__top"><i>01</i><b>Pesi</b></span></div>
               <div class="zone" data-zone="cardio"><span class="zone__top"><i>02</i><b>Cardio</b></span></div>
@@ -238,7 +274,7 @@
           <p class="lead reveal-up">Percorsi personalizzati e lezioni mirate, in base al tuo obiettivo.</p>
         </header>
         <div class="cards cards--4">
-          <article class="card tilt" data-tilt-max="8">
+          <article class="card tilt" data-tilt-max="8" data-cursor="Scopri">
             <span class="card__num">01</span>
             <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="14" r="6"/><path d="M12 42v-8c0-6.6 5.4-12 12-12s12 5.4 12 12v8"/></svg></div>
             <h3>Personal Training</h3>
@@ -246,7 +282,7 @@
             <a href="#contatti" class="card__link" data-goal="Personal Training">Richiedi info <i class="arrow"></i></a>
             <span class="card__glare"></span>
           </article>
-          <article class="card tilt" data-tilt-max="8">
+          <article class="card tilt" data-tilt-max="8" data-cursor="Scopri">
             <span class="card__num">02</span>
             <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 41s-14-8.8-18.6-18C2.4 16.6 6 9 13 9c4 0 7 2.4 11 6.6C28 11.4 31 9 35 9c7 0 10.6 7.6 7.6 14C38 32.2 24 41 24 41z"/><path d="M10 24h8l3-5 4 10 3-5h10"/></svg></div>
             <h3>Fitness & Benessere</h3>
@@ -254,7 +290,7 @@
             <a href="#contatti" class="card__link" data-goal="Fitness & Benessere">Richiedi info <i class="arrow"></i></a>
             <span class="card__glare"></span>
           </article>
-          <article class="card tilt" data-tilt-max="8">
+          <article class="card tilt" data-tilt-max="8" data-cursor="Scopri">
             <span class="card__num">03</span>
             <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M28 8a4 4 0 1 1 0 .1M20 20l8-4 6 6 6 2M28 16l-4 12 8 6v8M24 28l-8 4-6-2"/></svg></div>
             <h3>Preparazione Atletica</h3>
@@ -262,7 +298,7 @@
             <a href="#contatti" class="card__link" data-goal="Preparazione Atletica">Richiedi info <i class="arrow"></i></a>
             <span class="card__glare"></span>
           </article>
-          <article class="card tilt" data-tilt-max="8">
+          <article class="card tilt" data-tilt-max="8" data-cursor="Scopri">
             <span class="card__num">04</span>
             <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 4 8 12v12c0 10 7 17 16 20 9-3 16-10 16-20V12z"/><path d="M17 24l5 5 9-10"/></svg></div>
             <h3>Functional Training</h3>
@@ -350,7 +386,7 @@
             <span data-ig-handle>@a.c._personal_trainer</span>
           </a>
         </div>
-        <div class="ig__phone tilt" data-tilt-max="12" aria-hidden="true">
+        <div class="ig__phone tilt" data-tilt-max="12" aria-hidden="true" data-cursor="Segui">
           <div class="phone">
             <div class="phone__notch"></div>
             <div class="phone__head">
@@ -375,23 +411,23 @@
           <h2 class="h2 split">Tutto quello<br><span class="accent">che vuoi sapere.</span></h2>
         </header>
         <div class="faq__list">
-          <details class="faq__item reveal-up">
+          <details class="faq__item">
             <summary>Devo essere già allenato per iniziare?<i></i></summary>
             <div><p>Assolutamente no. Ogni percorso parte da una valutazione iniziale e viene costruito sul tuo livello reale, che tu sia alle prime armi o già esperto.</p></div>
           </details>
-          <details class="faq__item reveal-up">
+          <details class="faq__item">
             <summary>Come funziona l'accesso in palestra?<i></i></summary>
             <div><p>Si lavora su prenotazione: blocchi i tuoi appuntamenti e concordiamo insieme i tuoi giorni fissi di allenamento. Così gli ingressi sono organizzati, la sala non è mai sovraffollata e vieni seguito al meglio.</p></div>
           </details>
-          <details class="faq__item reveal-up">
+          <details class="faq__item">
             <summary>Quante volte a settimana devo allenarmi?<i></i></summary>
             <div><p>Dipende dal tuo obiettivo e dal tempo che hai. Si può ottenere molto anche con 2–3 sedute settimanali ben strutturate: conta la qualità e la costanza.</p></div>
           </details>
-          <details class="faq__item reveal-up">
+          <details class="faq__item">
             <summary>Dove ci alleniamo?<i></i></summary>
             <div><p>Nella nuova sede di <strong>Via Trieste 62, Cesarò (ME)</strong>: più grande e completa, con area pesi, cardio, functional e combat.</p></div>
           </details>
-          <details class="faq__item reveal-up">
+          <details class="faq__item">
             <summary>Quanto costa un percorso?<i></i></summary>
             <div><p>Il costo dipende dal tipo di percorso e dalla frequenza. Chiamami o scrivimi: per tariffe e consulenza iniziale ti propongo la soluzione più adatta a te, senza impegno.</p></div>
           </details>
@@ -474,7 +510,7 @@
       </nav>
       <p class="footer__copy">© <span id="year"></span> A.C. Personal Trainer. Tutti i diritti riservati.</p>
     </div>
-    <div class="footer__giant" aria-hidden="true">A·C</div>
+    <div class="footer__giant" aria-hidden="true"><span>A</span><span>·</span><span>C</span></div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -482,6 +518,7 @@
   <script src="assets/js/config.js"></script>
   <script src="assets/vendor/gsap/gsap.min.js" defer></script>
   <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="assets/vendor/lenis/lenis.min.js" defer></script>
   <script src="assets/js/main.js" defer></script>
   <script type="module" src="assets/js/scene.js"></script>
 </body>

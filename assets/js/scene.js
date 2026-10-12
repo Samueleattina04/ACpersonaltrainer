@@ -81,6 +81,8 @@ function plateGeometry(R, t) {
 }
 
 const dumbbell = new THREE.Group();
+const parts = []; // pieces that fly apart in the "exploded" view
+function track(mesh, side, k) { mesh.userData.explode = { baseY: mesh.position.y, side, k }; parts.push(mesh); }
 const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 1.5, 48), steel);
 dumbbell.add(handle);
 
@@ -95,28 +97,33 @@ const plates = [
   const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.08, 48), goldDark);
   collar.position.y = side * (y - 0.04);
   dumbbell.add(collar);
+  track(collar, side, 0.25);
   plates.forEach(({ R, t }, i) => {
     const p = new THREE.Mesh(plateGeometry(R, t), gold);
     y += t / 2;
     p.position.y = side * y;
     y += t / 2 + 0.012;
     dumbbell.add(p);
+    track(p, side, 0.65 + i * 0.5);
     if (i === 0) {
       // crimson inlay ring, like the shield in the logo
       const ring = new THREE.Mesh(new THREE.TorusGeometry(R * 0.6, 0.022, 16, 96), crimson);
       ring.rotation.x = Math.PI / 2;
       ring.position.y = p.position.y - side * (t / 2 - 0.01); // inner face
       dumbbell.add(ring);
+      track(ring, side, 0.65);
     }
   });
   // end sleeve + cap
   const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.18, 48), steel);
   sleeve.position.y = side * (y + 0.08);
   dumbbell.add(sleeve);
+  track(sleeve, side, 2.2);
   const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.13, 0.06, 48), gold);
   cap.position.y = side * (y + 0.2);
   cap.rotation.x = side > 0 ? 0 : Math.PI;
   dumbbell.add(cap);
+  track(cap, side, 2.7);
 });
 dumbbell.rotation.z = Math.PI / 2;
 
@@ -269,35 +276,70 @@ function render() {
   pointer.sx += (pointer.x - pointer.sx) * 0.05;
   pointer.sy += (pointer.y - pointer.sy) * 0.05;
 
-  // hero group: intro + scroll exit
-  const sc = base.s * (0.4 + 0.6 * ie) * (1 - heroP * 0.35);
-  hero.scale.setScalar(sc);
-  hero.position.x = base.x + pointer.sx * 0.25 - heroP * (isSmall() ? 0 : 1.2);
-  hero.position.y = base.y + Math.sin(t * 0.8) * 0.08 + heroP * 3.2 + pointer.sy * 0.15;
-  hero.visible = heroP < 1.35;
-
-  // dumbbell motion
+  // Choreography driven by main.js (window.AC_STATE):
+  //   travel 0→1  dumbbell glides from the hero to the centre of the screen
+  //   pin    0→1  pinned manifesto: rotation + exploded view
+  //   exit   0→1  flies away after the manifesto
+  const st = window.AC_STATE;
+  const smooth = (v) => v * v * (3 - 2 * v);
   const spin = reduceMotion ? 0 : t * 0.35;
-  dbPivot.rotation.y = spin + (1 - ie) * -4 + heroP * 3 + pointer.sx * 0.6;
-  dbPivot.rotation.x = 0.35 + pointer.sy * -0.4 + heroP * 0.8;
+  let x, y, sc, fade, explode = 0, pin = 0;
+  const hx = base.x + pointer.sx * 0.25;
+  const hy = base.y + Math.sin(t * 0.8) * 0.08 + pointer.sy * 0.15;
+
+  if (st) {
+    const tr = smooth(THREE.MathUtils.clamp(st.travel, 0, 1));
+    const ex = THREE.MathUtils.clamp(st.exit, 0, 1);
+    pin = THREE.MathUtils.clamp(st.pin, 0, 1);
+    explode = smooth(Math.pow(Math.sin(pin * Math.PI), 0.8));
+    const cs = base.s * (isSmall() ? 1.15 : 0.95);
+    x = THREE.MathUtils.lerp(hx, pointer.sx * 0.15, tr);
+    y = THREE.MathUtils.lerp(hy, Math.sin(t * 0.8) * 0.05, tr) + ex * ex * 5;
+    sc = THREE.MathUtils.lerp(base.s, cs, tr) * (0.4 + 0.6 * ie) * (1 - ex * 0.45);
+    fade = 1 - ex;
+    dbPivot.rotation.y = spin + (1 - ie) * -4 + tr * Math.PI + pin * Math.PI * 2 + pointer.sx * 0.6;
+    dbPivot.rotation.x = 0.35 + pointer.sy * -0.4 + tr * 0.25 + explode * 0.35 + ex * 1.2;
+  } else {
+    // fallback (no GSAP / reduced motion): simple exit with the hero
+    const heroP = THREE.MathUtils.clamp(scroll, 0, 1.4);
+    x = hx - heroP * (isSmall() ? 0 : 1.2);
+    y = hy + heroP * 3.2;
+    sc = base.s * (0.4 + 0.6 * ie) * (1 - heroP * 0.35);
+    fade = 1 - heroP / 1.35;
+    dbPivot.rotation.y = spin + (1 - ie) * -4 + heroP * 3 + pointer.sx * 0.6;
+    dbPivot.rotation.x = 0.35 + pointer.sy * -0.4 + heroP * 0.8;
+  }
+  fade = THREE.MathUtils.clamp(fade, 0, 1);
+  hero.position.set(x, y, 0);
+  hero.scale.setScalar(sc);
+  hero.visible = fade > 0.01;
   dbPivot.rotation.z = -0.25 + Math.sin(t * 0.5) * 0.06;
 
-  rings.rotation.z = reduceMotion ? 0 : t * 0.08;
-  rings.rotation.x = 0.2 + pointer.sy * 0.25;
-  rings.rotation.y = -0.35 + pointer.sx * 0.35;
-  ringMat.opacity = 0.9 * ie * (1 - heroP / 1.35);
-  dashMat.opacity = 0.55 * ie * (1 - heroP / 1.35);
-  glow.material.opacity = ie * (1 - heroP / 1.35);
+  // exploded view: every piece slides out along the bar
+  for (const m of parts) {
+    const { baseY, side, k } = m.userData.explode;
+    m.position.y = baseY + side * k * explode * 0.62;
+    m.position.x = Math.sin(k * 5) * explode * 0.12;
+  }
+
+  rings.rotation.z = (reduceMotion ? 0 : t * 0.08) + pin * Math.PI;
+  rings.rotation.x = 0.2 + pointer.sy * 0.25 + explode * 0.5;
+  rings.rotation.y = -0.35 + pointer.sx * 0.35 - explode * 0.4;
+  rings.scale.setScalar(1 + explode * 0.35);
+  ringMat.opacity = 0.9 * ie * fade;
+  dashMat.opacity = 0.55 * ie * fade;
+  glow.material.opacity = ie * fade * (1 + explode * 0.4);
+  camera.userData.dolly = explode;
 
   // light follows pointer
-  mouseLight.position.x = base.x + pointer.sx * 4;
+  mouseLight.position.x = hero.position.x + pointer.sx * 4;
   mouseLight.position.y = pointer.sy * 3;
 
   // dust: drift up, parallax with scroll, burst on quiz result
   burst = Math.max(0, burst - dt * 0.6);
   if (!reduceMotion) {
     const arr = pGeo.attributes.position.array;
-    const speed = (0.15 + burst * 4) * dt;
+    const speed = (0.15 + burst * 4 + (camera.userData.dolly || 0) * 1.2) * dt;
     for (let i = 0; i < COUNT; i++) {
       const iy = i * 3 + 1;
       arr[iy] += pSpeed[i] * speed;
@@ -309,6 +351,7 @@ function render() {
   dust.rotation.y = pointer.sx * 0.08 + (reduceMotion ? 0 : t * 0.01);
   dust.material.opacity = 0.85 * (0.35 + 0.65 * ie);
 
+  camera.position.z = 9 - (camera.userData.dolly || 0) * 1.4;
   camera.position.x = pointer.sx * 0.3;
   camera.position.y = pointer.sy * 0.2;
   camera.lookAt(0, 0, 0);
