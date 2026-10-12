@@ -1,25 +1,26 @@
 /* ==========================================================================
    A.C. PERSONAL TRAINER — CONFIGURAZIONE CONTATTI
    Modifica solo questo file per aggiornare i recapiti del sito.
-   Lascia una stringa vuota ('') per nascondere un recapito.
+   Lascia una stringa vuota ('') o una lista vuota ([]) per nascondere un recapito.
    ========================================================================== */
 window.AC_CONFIG = {
   // Username Instagram (senza @)
   instagram: 'a.c._personal_trainer',
 
-  // Numero WhatsApp in formato internazionale, solo cifre (es. '393401234567').
-  // Se impostato, il modulo contatti invia il messaggio direttamente su WhatsApp.
-  whatsapp: '',
+  // Numeri di telefono mostrati nel sito (cliccabili per chiamare)
+  phones: ['350 539 0434', '320 577 1476'],
 
-  // Telefono da mostrare (es. '+39 340 123 4567')
-  phone: '',
+  // Numero WhatsApp in formato internazionale, solo cifre.
+  // Il modulo contatti invia il messaggio già pronto su questo numero.
+  whatsapp: '393505390434',
 
   // Email (es. 'info@acpersonaltrainer.it')
   email: '',
 
-  // Località mostrata nel sito e usata per la mappa
+  // Sede
+  address: 'Via Trieste 62',
   city: 'Cesarò (ME), Sicilia',
-  mapsQuery: 'Cesarò, Messina, Italia',
+  mapsQuery: 'Via Trieste 62, 98033 Cesarò ME, Italia',
 
   // Dati fiscali mostrati nel footer
   businessName: 'A.C. Personal Trainer di Alessandro Caputo',

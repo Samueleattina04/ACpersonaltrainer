@@ -1,6 +1,7 @@
 # A.C. Personal Trainer · sito web
 
-Sito one-page premium per **A.C. Personal Trainer di Alessandro Caputo**, Cesarò (ME).
+Sito one-page premium per **A.C. Personal Trainer di Alessandro Caputo**,
+nuova sede in **Via Trieste 62, Cesarò (ME)**: area pesi, cardio, functional e combat.
 Instagram: [@a.c._personal_trainer](https://www.instagram.com/a.c._personal_trainer/)
 
 ## Stack
@@ -36,16 +37,17 @@ assets/
 
 ## Configurare i contatti
 
-Apri `assets/js/config.js` e compila i campi:
+Tutti i recapiti sono in `assets/js/config.js`:
 
 ```js
-whatsapp: '393401234567',            // il modulo invierà il messaggio su WhatsApp
-phone:    '+39 340 123 4567',
-email:    'info@acpersonaltrainer.it',
+phones:   ['350 539 0434', '320 577 1476'],
+whatsapp: '393505390434',   // il modulo contatti invia il messaggio già pronto qui
+email:    '',               // opzionale
+address:  'Via Trieste 62',
 ```
 
-Senza WhatsApp né email, il modulo copia il messaggio negli appunti e apre la chat
-Instagram (`ig.me`). Con il numero WhatsApp impostato, il messaggio arriva già pronto in chat.
+Se `whatsapp` è vuoto, il modulo usa l'email; se manca anche quella, copia il messaggio
+e apre la chat Instagram (`ig.me`).
 
 ## Pubblicare su Hostinger
 
@@ -74,5 +76,6 @@ python3 -m http.server 8000
 - La mappa Google si carica solo al clic (nessun cookie di terze parti senza consenso).
 - Se il dispositivo non supporta WebGL, l'hero mostra il logo al posto della scena 3D.
 - Con "riduci movimento" attivo nel sistema operativo, le animazioni vengono disattivate.
-- Testi, percorsi e FAQ sono una prima bozza: vanno rivisti con Alessandro (prezzi, orari,
-  indirizzo esatto della sede, eventuali certificazioni).
+- Testi basati sui post Instagram ufficiali (nuova sede, 4 aree, servizi, accesso su
+  prenotazione). Da confermare con Alessandro: orari, quale numero usa WhatsApp, eventuali
+  certificazioni. Foto reali della sede renderebbero il sito ancora più forte.

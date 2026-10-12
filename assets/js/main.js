@@ -25,9 +25,19 @@
   if (CFG.city) $$('[data-city]').forEach(function (el) { el.textContent = CFG.city; });
   if (CFG.vat) $$('[data-vat]').forEach(function (el) { el.textContent = CFG.vat; });
   if (CFG.businessName) $$('[data-business]').forEach(function (el) { el.textContent = CFG.businessName; });
-  if (CFG.phone) {
-    $$('[data-show="phone"]').forEach(function (el) { el.hidden = false; });
-    $$('[data-phone-link]').forEach(function (a) { a.href = 'tel:' + CFG.phone.replace(/[^\d+]/g, ''); a.textContent = CFG.phone; });
+  if (CFG.address) $$('[data-address]').forEach(function (el) { el.textContent = CFG.address; });
+  var phones = CFG.phones || [];
+  var tel = function (n) { var d = n.replace(/[^\d+]/g, ''); return 'tel:' + (d.charAt(0) === '+' ? d : '+39' + d); };
+  if (phones.length) {
+    $$('[data-show="phones"]').forEach(function (el) { el.hidden = false; });
+    $$('[data-phones]').forEach(function (el) {
+      el.innerHTML = phones.map(function (n) { return '<a href="' + tel(n) + '">' + n + '</a>'; }).join('<br>');
+    });
+    $$('.contact__quick').forEach(function (el) {
+      el.innerHTML = phones.map(function (n) {
+        return '<a class="btn btn--ghost btn--sm" href="' + tel(n) + '"><svg class="btn__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg><span>' + n + '</span></a>';
+      }).join('') + (CFG.whatsapp ? '<a class="btn btn--gold btn--sm" href="https://wa.me/' + CFG.whatsapp + '" target="_blank" rel="noopener"><span>WhatsApp</span></a>' : '');
+    });
   }
   if (CFG.whatsapp) {
     $$('[data-show="whatsapp"]').forEach(function (el) { el.hidden = false; });
@@ -213,20 +223,48 @@
     coin.addEventListener('pointerleave', function () { coin.classList.remove('is-flipped'); });
   }
 
+  /* ---------- Venue areas (isometric plan) ---------- */
+  var areaBtns = $$('.area'), zones = $$('.zone');
+  function setZone(z) {
+    areaBtns.forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-zone') === z); });
+    zones.forEach(function (el) { el.classList.toggle('is-active', el.getAttribute('data-zone') === z); });
+  }
+  areaBtns.forEach(function (b) {
+    var z = b.getAttribute('data-zone');
+    b.addEventListener('click', function () { setZone(z); });
+    b.addEventListener('pointerenter', function () { setZone(z); });
+    b.addEventListener('focus', function () { setZone(z); });
+  });
+  zones.forEach(function (el) { el.addEventListener('pointerenter', function () { setZone(el.getAttribute('data-zone')); }); });
+  setZone('pesi');
+  var plan = $('#plan');
+  if (plan && finePointer && !reduceMotion) {
+    plan.addEventListener('pointermove', function (e) {
+      var r = plan.getBoundingClientRect();
+      plan.style.setProperty('--rx', ((e.clientY - r.top) / r.height - 0.5) * -8 + 'deg');
+      plan.style.setProperty('--rz', ((e.clientX - r.left) / r.width - 0.5) * 10 + 'deg');
+    });
+    plan.addEventListener('pointerleave', function () { plan.style.removeProperty('--rx'); plan.style.removeProperty('--rz'); });
+  }
+  if (animate) {
+    gsap.from('.zone', { z: -200, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.12, clearProps: 'transform,opacity', scrollTrigger: { trigger: '#plan', start: 'top 80%' } });
+    gsap.from('.area', { x: -30, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08, clearProps: 'transform,opacity', scrollTrigger: { trigger: '.areas', start: 'top 85%' } });
+  }
+
   /* ---------- Quiz ---------- */
   var quiz = $('#quiz'), steps = $$('.quiz__step', quiz), qBar = $('#quizBar'), back = $('#quizBack');
   var days = $('#days'), daysOut = $('#daysOut'), current = 0;
-  var answers = { goal: '', level: '', mode: '', days: 3 };
+  var answers = { goal: '', level: '', slot: '', days: 3 };
 
   var PATHS = {
-    dimagrire: { title: 'Percorso Legionario', sub: 'Definizione & Dimagrimento', service: 'Dimagrimento e ricomposizione',
-      desc: 'Un piano per bruciare grasso e preservare la massa magra: allenamento metabolico, forza di base e abitudini quotidiane sostenibili.' },
-    massa: { title: 'Percorso Centurione', sub: 'Ipertrofia & Estetica', service: 'Forza e ipertrofia',
-      desc: 'Volume, intensità e progressione dei carichi per costruire muscolo di qualità e un fisico proporzionato.' },
-    forza: { title: 'Percorso Spartano', sub: 'Forza & Performance', service: 'Preparazione atletica',
-      desc: 'Fondamentali, potenza ed esplosività: diventi più forte, più veloce e più resistente, dentro e fuori dal campo.' },
-    benessere: { title: 'Percorso Pretoriano', sub: 'Benessere & Mobilità', service: 'Mobilità e postura',
-      desc: 'Tonicità, postura e mobilità per muoverti meglio e sentirti pieno di energia ogni giorno.' }
+    dimagrire: { title: 'Percorso Legionario', sub: 'Fitness & Benessere', service: 'Fitness & Benessere', areas: ['Area Cardio', 'Area Functional'],
+      desc: 'Dimagrimento e tonificazione con un mix di lavoro cardio e functional, più abitudini quotidiane sostenibili.' },
+    massa: { title: 'Percorso Centurione', sub: 'Personal Training · Pesi', service: 'Personal Training', areas: ['Area Pesi'],
+      desc: 'Potenziamento muscolare e miglioramento estetico: volume, intensità e progressione dei carichi, seguito passo passo.' },
+    forza: { title: 'Percorso Spartano', sub: 'Preparazione Atletica', service: 'Preparazione Atletica', areas: ['Area Pesi', 'Area Combat'],
+      desc: 'Protocolli specifici per la tua disciplina: forza, potenza ed esplosività per rendere di più in campo, sul ring o in pedana.' },
+    benessere: { title: 'Percorso Pretoriano', sub: 'Functional Training', service: 'Functional Training', areas: ['Area Functional'],
+      desc: 'Forza, agilità e coordinazione per muoverti meglio nella vita di tutti i giorni e sentirti pieno di energia.' }
   };
   var LEVEL_NOTE = {
     principiante: 'Partiamo dalle basi: tecnica corretta e progressione graduale, in totale sicurezza.',
@@ -260,11 +298,11 @@
   back.addEventListener('click', function () { if (current > 0) goStep(current - 1); });
 
   $('#quizGo').addEventListener('click', function () {
-    if (!answers.mode) { toast('Scegli se allenarti in sede o online.'); return; }
+    if (!answers.slot) { toast('Scegli la fascia oraria che preferisci.'); return; }
     var p = PATHS[answers.goal] || PATHS.benessere;
     $('#resTitle').innerHTML = p.title + '<br><small style="font-size:.5em;letter-spacing:.1em">' + p.sub + '</small>';
     $('#resDesc').textContent = p.desc + ' ' + (LEVEL_NOTE[answers.level] || '');
-    var tags = [answers.level, answers.days + ' allenamenti / settimana', answers.mode === 'online' ? 'Coaching online' : 'In sede a Cesarò'];
+    var tags = [answers.level, answers.days + ' giorni fissi / settimana', 'Fascia: ' + answers.slot].concat(p.areas);
     $('#resTags').innerHTML = tags.map(function (t) { return '<li>' + t + '</li>'; }).join('');
     goStep(3);
     if (animate) gsap.from('#resTitle', { scale: 0.8, opacity: 0, duration: 1, ease: 'expo.out' });
@@ -273,12 +311,12 @@
 
   $('#resCta').addEventListener('click', function () {
     var p = PATHS[answers.goal] || PATHS.benessere;
-    prefill(answers.mode === 'online' ? 'Coaching Online' : p.service,
-      'Ho fatto il test sul sito: ' + p.title + ' (' + p.sub + '). Livello ' + answers.level + ', ' + answers.days + ' giorni a settimana, ' + answers.mode + '.');
+    prefill(p.service,
+      'Ho fatto il test sul sito: ' + p.title + ' (' + p.sub + '). Livello ' + answers.level + ', vorrei allenarmi ' + answers.days + ' giorni a settimana, di ' + answers.slot + '. Vorrei prenotare la consulenza iniziale.');
   });
 
   $('#quizRestart').addEventListener('click', function () {
-    quiz.reset(); answers = { goal: '', level: '', mode: '', days: 3 }; setRangeFill(); goStep(0);
+    quiz.reset(); answers = { goal: '', level: '', slot: '', days: 3 }; setRangeFill(); goStep(0);
   });
 
   /* ---------- Contact form ---------- */
@@ -329,7 +367,7 @@
   /* ---------- Map (click-to-load, GDPR friendly) ---------- */
   $('#mapLoad').addEventListener('click', function () {
     var f = document.createElement('iframe');
-    f.src = 'https://maps.google.com/maps?q=' + encodeURIComponent(CFG.mapsQuery || 'Cesarò') + '&z=14&output=embed';
+    f.src = 'https://maps.google.com/maps?q=' + encodeURIComponent(CFG.mapsQuery || 'Cesarò') + '&z=17&output=embed';
     f.title = 'Mappa: ' + (CFG.city || 'Cesarò');
     f.loading = 'lazy';
     f.referrerPolicy = 'no-referrer-when-downgrade';
