@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>A.C. Personal Trainer · Alessandro Caputo · Cesarò</title>
+  <meta name="description" content="A.C. Personal Trainer – Alessandro Caputo. Personal training 1:1, coaching online, dimagrimento, forza e preparazione atletica a Cesarò (ME). Forgia il tuo corpo come un guerriero.">
+  <meta name="theme-color" content="#0a0908">
+  <meta name="color-scheme" content="dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:title" content="A.C. Personal Trainer · Forgia il tuo corpo">
+  <meta property="og:description" content="Personal training 1:1 e coaching online con Alessandro Caputo, Cesarò (ME).">
+  <meta property="og:image" content="assets/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <link rel="preload" href="assets/fonts/cinzel-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HealthClub",
+    "name": "A.C. Personal Trainer",
+    "founder": { "@type": "Person", "name": "Alessandro Caputo", "jobTitle": "Personal Trainer" },
+    "image": "assets/og-image.jpg",
+    "address": { "@type": "PostalAddress", "addressLocality": "Cesarò", "addressRegion": "ME", "addressCountry": "IT" },
+    "vatID": "IT03726880838",
+    "sameAs": ["https://www.instagram.com/a.c._personal_trainer/"]
+  }
+  </script>
+
+  <script type="importmap">
+  { "imports": { "three": "./assets/vendor/three/three.module.min.js" } }
+  </script>
+</head>
+<body class="is-loading">
+
+  <!-- ============ PRELOADER ============ -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__ring">
+      <svg viewBox="0 0 120 120"><circle class="loader__track" cx="60" cy="60" r="54"/><circle class="loader__bar" id="loaderBar" cx="60" cy="60" r="54"/></svg>
+      <img src="assets/logo.webp" alt="" width="96" height="96">
+    </div>
+    <div class="loader__word">A<span>·</span>C</div>
+    <div class="loader__pct" id="loaderPct">0</div>
+  </div>
+
+  <div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- 3D scene (fixed behind content) -->
+  <canvas id="webgl" aria-hidden="true"></canvas>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <a href="#top" class="nav__brand" aria-label="A.C. Personal Trainer – torna su">
+      <img src="assets/logo.webp" alt="" width="44" height="44">
+      <span>A<em>·</em>C <small>Personal Trainer</small></span>
+    </a>
+    <nav class="nav__links" id="navLinks" aria-label="Navigazione principale">
+      <a href="#chi-sono">Chi sono</a>
+      <a href="#metodo">Metodo</a>
+      <a href="#servizi">Servizi</a>
+      <a href="#percorso">Il tuo percorso</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contatti" class="nav__mobile-cta">Contatti</a>
+    </nav>
+    <a href="#contatti" class="btn btn--gold btn--sm nav__cta magnetic"><span>Prenota</span></a>
+    <button class="nav__burger" id="burger" aria-label="Apri menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="hero">
+      <div class="hero__fallback" aria-hidden="true"><img src="assets/logo.webp" alt=""></div>
+      <div class="hero__inner container">
+        <p class="eyebrow reveal-up"><span class="dot"></span> Personal Trainer · Cesarò (ME)</p>
+        <h1 class="hero__title">
+          <span class="line"><span class="word">Forgia</span></span>
+          <span class="line"><span class="word">il tuo corpo</span></span>
+          <span class="line"><span class="word accent">come un guerriero.</span></span>
+        </h1>
+        <p class="hero__sub reveal-up">Allenamento personalizzato con <strong>Alessandro Caputo</strong>. Disciplina, metodo e risultati concreti: ogni programma è costruito su di te, sui tuoi obiettivi e sul tuo ritmo.</p>
+        <div class="hero__ctas reveal-up">
+          <a href="#percorso" class="btn btn--gold magnetic"><span>Trova il tuo percorso</span><i class="arrow"></i></a>
+          <a href="#" class="btn btn--ghost magnetic" data-ig-link target="_blank" rel="noopener"><span>Seguimi su Instagram</span></a>
+        </div>
+        <ul class="hero__stats reveal-up" aria-label="I punti di forza">
+          <li><b>1:1</b><span>Coaching dedicato</span></li>
+          <li><b>100%</b><span>Programmi su misura</span></li>
+          <li><b>In sede</b><span>& online</span></li>
+        </ul>
+      </div>
+      <a href="#chi-sono" class="hero__scroll" aria-label="Scorri giù"><span>Scroll</span><i></i></a>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Disciplina</span><i>✦</i><span>Forza</span><i>✦</i><span>Onore</span><i>✦</i><span>Costanza</span><i>✦</i><span>Risultati</span><i>✦</i>
+        <span>Disciplina</span><i>✦</i><span>Forza</span><i>✦</i><span>Onore</span><i>✦</i><span>Costanza</span><i>✦</i><span>Risultati</span><i>✦</i>
+      </div>
+    </div>
+
+    <!-- ============ CHI SONO ============ -->
+    <section class="section about" id="chi-sono">
+      <div class="container about__grid">
+        <div class="about__visual">
+          <div class="coin tilt" data-tilt-max="14" id="coin">
+            <div class="coin__inner">
+              <div class="coin__face coin__front"><img src="assets/logo.webp" alt="Logo A.C. Personal Trainer: guerriero spartano con manubrio" width="720" height="720" loading="lazy"></div>
+              <div class="coin__face coin__back">
+                <div class="coin__emblem">
+                  <span class="coin__mono">A<i>·</i>C</span>
+                  <span class="coin__motto">Vires · Disciplina · Honor</span>
+                </div>
+              </div>
+            </div>
+            <div class="coin__glare"></div>
+          </div>
+          <p class="hint">Passa sopra / tocca la moneta</p>
+        </div>
+
+        <div class="about__text">
+          <p class="eyebrow reveal-up"><span class="dot"></span> Chi sono</p>
+          <h2 class="h2 split">Alessandro Caputo,<br><span class="accent">il tuo allenatore.</span></h2>
+          <p class="lead reveal-up">Sono un personal trainer di Cesarò. Ho fondato <strong>A.C. Personal Trainer</strong> con un'idea semplice: allenarsi bene non è una questione di fortuna, ma di <em>metodo</em>.</p>
+          <p class="reveal-up">Come i guerrieri dell'antichità, credo nella disciplina quotidiana, nella costanza e nella forza che si costruisce un passo alla volta. Ti seguo in prima persona, dalla prima valutazione fino al traguardo, adattando ogni scheda ai tuoi progressi, ai tuoi impegni e al tuo punto di partenza.</p>
+          <ul class="pillars">
+            <li class="pillar reveal-up"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.3 8 11 4.6-1.7 8-6 8-11V5l-8-3z"/></svg></span><div><h3>Disciplina</h3><p>Un piano chiaro, obiettivi misurabili e niente improvvisazione.</p></div></li>
+            <li class="pillar reveal-up"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10h2v4H3zM19 10h2v4h-2zM6 7h2v10H6zM16 7h2v10h-2zM8 11h8v2H8z"/></svg></span><div><h3>Forza</h3><p>Tecnica corretta, progressione dei carichi, risultati che durano.</p></div></li>
+            <li class="pillar reveal-up"><span class="pillar__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-9C1.2 8.8 3 5 6.5 5c2 0 3.5 1.2 5.5 3.3C14 6.2 15.5 5 17.5 5 21 5 22.8 8.8 21.3 12 19 16.6 12 21 12 21z"/></svg></span><div><h3>Benessere</h3><p>Allenarsi per stare meglio, dentro e fuori dalla palestra.</p></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ METODO ============ -->
+    <section class="section method" id="metodo">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow reveal-up"><span class="dot"></span> Il metodo A·C</p>
+          <h2 class="h2 split">Quattro fasi.<br><span class="accent">Un solo obiettivo: il tuo.</span></h2>
+        </header>
+        <ol class="timeline" id="timeline">
+          <li class="timeline__line" aria-hidden="true"><span id="timelineFill"></span></li>
+          <li class="step">
+            <span class="step__num">I</span>
+            <div class="step__card">
+              <h3>Valutazione</h3>
+              <p>Colloquio iniziale, analisi del punto di partenza, postura, abitudini e storia sportiva. Capiamo insieme dove sei e dove vuoi arrivare.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step__num">II</span>
+            <div class="step__card">
+              <h3>Strategia</h3>
+              <p>Costruisco il tuo programma: esercizi, volumi, frequenza e progressioni calibrati sul tuo obiettivo e sul tempo che hai a disposizione.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step__num">III</span>
+            <div class="step__card">
+              <h3>Allenamento</h3>
+              <p>Ti alleni con me, in sede o online. Correggo la tecnica, gestisco i carichi e ti spingo oltre i limiti, in sicurezza.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step__num">IV</span>
+            <div class="step__card">
+              <h3>Evoluzione</h3>
+              <p>Monitoriamo i progressi con check periodici e aggiorniamo il piano. Il corpo si adatta: il programma anche.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ SERVIZI ============ -->
+    <section class="section services" id="servizi">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow reveal-up"><span class="dot"></span> Servizi</p>
+          <h2 class="h2 split">Scegli la tua<br><span class="accent">arena.</span></h2>
+        </header>
+        <div class="cards">
+          <article class="card tilt" data-tilt-max="8">
+            <span class="card__num">01</span>
+            <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="14" r="6"/><path d="M12 42v-8c0-6.6 5.4-12 12-12s12 5.4 12 12v8"/></svg></div>
+            <h3>Personal Training 1:1</h3>
+            <p>Sedute individuali con me al tuo fianco: tecnica, motivazione e massima attenzione in ogni ripetizione.</p>
+            <a href="#contatti" class="card__link" data-goal="Personal Training 1:1">Richiedi info <i class="arrow"></i></a>
+            <span class="card__glare"></span>
+          </article>
+          <article class="card tilt" data-tilt-max="8">
+            <span class="card__num">02</span>
+            <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="24" rx="3"/><path d="M18 40h12M24 32v8"/><path d="m20 16 8 4-8 4z"/></svg></div>
+            <h3>Coaching Online</h3>
+            <p>Programma personalizzato, video-guide e check costanti. Ti alleni dove vuoi, con la stessa cura.</p>
+            <a href="#contatti" class="card__link" data-goal="Coaching Online">Richiedi info <i class="arrow"></i></a>
+            <span class="card__glare"></span>
+          </article>
+          <article class="card tilt" data-tilt-max="8">
+            <span class="card__num">03</span>
+            <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 6c6 8 12 13 12 21a12 12 0 0 1-24 0c0-5 3-9 5-11 0 4 2 7 5 7-2-6 0-12 2-17z"/></svg></div>
+            <h3>Dimagrimento & Ricomposizione</h3>
+            <p>Perdere grasso e definire la muscolatura con un allenamento mirato e abitudini sostenibili nel tempo.</p>
+            <a href="#contatti" class="card__link" data-goal="Dimagrimento e ricomposizione">Richiedi info <i class="arrow"></i></a>
+            <span class="card__glare"></span>
+          </article>
+          <article class="card tilt" data-tilt-max="8">
+            <span class="card__num">04</span>
+            <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M4 20h4v8H4zM40 20h4v8h-4zM9 14h5v20H9zM34 14h5v20h-5zM14 22h20v4H14z"/></svg></div>
+            <h3>Forza & Ipertrofia</h3>
+            <p>Aumentare massa e forza con progressioni intelligenti, periodizzazione e tecnica impeccabile.</p>
+            <a href="#contatti" class="card__link" data-goal="Forza e ipertrofia">Richiedi info <i class="arrow"></i></a>
+            <span class="card__glare"></span>
+          </article>
+          <article class="card tilt" data-tilt-max="8">
+            <span class="card__num">05</span>
+            <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M28 8a4 4 0 1 1 0 .1M20 20l8-4 6 6 6 2M28 16l-4 12 8 6v8M24 28l-8 4-6-2"/></svg></div>
+            <h3>Preparazione Atletica</h3>
+            <p>Esplosività, resistenza e prevenzione infortuni per chi pratica sport e vuole fare il salto di livello.</p>
+            <a href="#contatti" class="card__link" data-goal="Preparazione atletica">Richiedi info <i class="arrow"></i></a>
+            <span class="card__glare"></span>
+          </article>
+          <article class="card tilt" data-tilt-max="8">
+            <span class="card__num">06</span>
+            <div class="card__ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 6v36M14 12c4 3 6 7 6 12s-2 9-6 12M34 12c-4 3-6 7-6 12s2 9 6 12"/></svg></div>
+            <h3>Mobilità & Postura</h3>
+            <p>Muoverti meglio, ridurre rigidità e fastidi, migliorare la postura nella vita di tutti i giorni.</p>
+            <a href="#contatti" class="card__link" data-goal="Mobilità e postura">Richiedi info <i class="arrow"></i></a>
+            <span class="card__glare"></span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ QUIZ / PERCORSO ============ -->
+    <section class="section quiz" id="percorso">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow reveal-up"><span class="dot"></span> Il tuo percorso</p>
+          <h2 class="h2 split">Che guerriero<br><span class="accent">vuoi diventare?</span></h2>
+          <p class="lead reveal-up">Rispondi a tre domande: ti suggerisco il percorso più adatto e prepari già il messaggio per contattarmi.</p>
+        </header>
+
+        <form class="quiz__box" id="quiz" novalidate>
+          <div class="quiz__progress" aria-hidden="true"><span id="quizBar"></span></div>
+
+          <fieldset class="quiz__step is-active" data-step="0">
+            <legend><span>01 / 03</span> Qual è il tuo obiettivo principale?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="goal" value="dimagrire"><span><b>Dimagrire</b><small>Perdere grasso, sentirmi più leggero</small></span></label>
+              <label class="choice"><input type="radio" name="goal" value="massa"><span><b>Massa muscolare</b><small>Crescere e definire il fisico</small></span></label>
+              <label class="choice"><input type="radio" name="goal" value="forza"><span><b>Forza & performance</b><small>Sollevare di più, rendere nello sport</small></span></label>
+              <label class="choice"><input type="radio" name="goal" value="benessere"><span><b>Benessere</b><small>Tonicità, postura, energia</small></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="quiz__step" data-step="1">
+            <legend><span>02 / 03</span> Qual è il tuo livello attuale?</legend>
+            <div class="choices choices--3">
+              <label class="choice"><input type="radio" name="level" value="principiante"><span><b>Principiante</b><small>Parto da zero o quasi</small></span></label>
+              <label class="choice"><input type="radio" name="level" value="intermedio"><span><b>Intermedio</b><small>Mi alleno, ma voglio di più</small></span></label>
+              <label class="choice"><input type="radio" name="level" value="avanzato"><span><b>Avanzato</b><small>Esperto, cerco il dettaglio</small></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="quiz__step" data-step="2">
+            <legend><span>03 / 03</span> Come e quanto vuoi allenarti?</legend>
+            <div class="range">
+              <label for="days">Giorni a settimana: <output id="daysOut">3</output></label>
+              <input type="range" id="days" name="days" min="2" max="6" value="3">
+              <div class="range__ticks" aria-hidden="true"><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+            </div>
+            <div class="choices choices--2">
+              <label class="choice"><input type="radio" name="mode" value="in sede"><span><b>In sede</b><small>Con me, a Cesarò</small></span></label>
+              <label class="choice"><input type="radio" name="mode" value="online"><span><b>Online</b><small>Ovunque tu sia</small></span></label>
+            </div>
+            <button type="button" class="btn btn--gold magnetic quiz__go" id="quizGo"><span>Scopri il tuo percorso</span><i class="arrow"></i></button>
+          </fieldset>
+
+          <div class="quiz__step quiz__result" data-step="3" aria-live="polite">
+            <p class="eyebrow"><span class="dot"></span> Il tuo percorso consigliato</p>
+            <h3 class="quiz__title" id="resTitle">—</h3>
+            <p class="quiz__desc" id="resDesc"></p>
+            <ul class="quiz__tags" id="resTags"></ul>
+            <div class="quiz__actions">
+              <a href="#contatti" class="btn btn--gold magnetic" id="resCta"><span>Inizia ora</span><i class="arrow"></i></a>
+              <button type="button" class="btn btn--ghost" id="quizRestart"><span>Ricomincia</span></button>
+            </div>
+          </div>
+
+          <div class="quiz__nav">
+            <button type="button" class="quiz__back" id="quizBack" disabled>← Indietro</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ INSTAGRAM BANNER ============ -->
+    <section class="section ig">
+      <div class="container ig__inner">
+        <div class="ig__text">
+          <p class="eyebrow reveal-up"><span class="dot"></span> Community</p>
+          <h2 class="h2 split">Allenamenti, consigli<br><span class="accent">e trasformazioni.</span></h2>
+          <p class="lead reveal-up">Segui il percorso quotidiano su Instagram: esercizi, motivazione e i risultati di chi si allena con me.</p>
+          <a href="#" class="btn btn--gold magnetic reveal-up" data-ig-link target="_blank" rel="noopener">
+            <svg class="btn__ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+            <span data-ig-handle>@a.c._personal_trainer</span>
+          </a>
+        </div>
+        <div class="ig__phone tilt" data-tilt-max="12" aria-hidden="true">
+          <div class="phone">
+            <div class="phone__notch"></div>
+            <div class="phone__head">
+              <img src="assets/logo.webp" alt="" width="64" height="64" loading="lazy">
+              <div><b data-ig-handle-plain>a.c._personal_trainer</b><small>Alessandro Caputo · Personal Trainer</small></div>
+            </div>
+            <div class="phone__grid">
+              <span class="tile t1"><em>PUSH</em></span><span class="tile t2"><em>DAY</em></span><span class="tile t3"><img src="assets/logo.webp" alt="" loading="lazy"></span>
+              <span class="tile t4"><em>PULL</em></span><span class="tile t5"><em>LEGS</em></span><span class="tile t6"><em>CORE</em></span>
+              <span class="tile t7"><em>NO</em></span><span class="tile t8"><em>EXCUSES</em></span><span class="tile t9"><em>A·C</em></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="section faq" id="faq">
+      <div class="container faq__grid">
+        <header class="section__head">
+          <p class="eyebrow reveal-up"><span class="dot"></span> Domande frequenti</p>
+          <h2 class="h2 split">Tutto quello<br><span class="accent">che vuoi sapere.</span></h2>
+        </header>
+        <div class="faq__list">
+          <details class="faq__item reveal-up">
+            <summary>Devo essere già allenato per iniziare?<i></i></summary>
+            <div><p>Assolutamente no. Ogni percorso parte da una valutazione iniziale e viene costruito sul tuo livello reale, che tu sia alle prime armi o già esperto.</p></div>
+          </details>
+          <details class="faq__item reveal-up">
+            <summary>Come funziona il coaching online?<i></i></summary>
+            <div><p>Ricevi un programma personalizzato con indicazioni chiare su esercizi, serie e ripetizioni. Mi invii feedback e video di esecuzione, io correggo e aggiorno il piano ad ogni check.</p></div>
+          </details>
+          <details class="faq__item reveal-up">
+            <summary>Quante volte a settimana devo allenarmi?<i></i></summary>
+            <div><p>Dipende dal tuo obiettivo e dal tempo che hai. Si può ottenere molto anche con 2–3 sedute settimanali ben strutturate: conta la qualità e la costanza.</p></div>
+          </details>
+          <details class="faq__item reveal-up">
+            <summary>Dove ci alleniamo?<i></i></summary>
+            <div><p>Le sedute in presenza si svolgono a Cesarò (ME). Per chi è lontano è disponibile il percorso online, con la stessa attenzione al dettaglio.</p></div>
+          </details>
+          <details class="faq__item reveal-up">
+            <summary>Quanto costa un percorso?<i></i></summary>
+            <div><p>Il costo dipende dal tipo di servizio e dalla frequenza. Scrivimi: dopo un primo confronto ti propongo la soluzione più adatta a te, senza impegno.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTATTI ============ -->
+    <section class="section contact" id="contatti">
+      <div class="container contact__grid">
+        <div class="contact__info">
+          <p class="eyebrow reveal-up"><span class="dot"></span> Contatti</p>
+          <h2 class="h2 split">La battaglia<br><span class="accent">inizia oggi.</span></h2>
+          <p class="lead reveal-up">Scrivimi per una prima consulenza: parliamo del tuo obiettivo e costruiamo insieme il piano d'attacco.</p>
+          <ul class="contact__list reveal-up">
+            <li><span class="k">Dove</span><span class="v" data-city>Cesarò (ME), Sicilia</span></li>
+            <li><span class="k">Instagram</span><a class="v" href="#" data-ig-link target="_blank" rel="noopener" data-ig-handle>@a.c._personal_trainer</a></li>
+            <li data-show="phone" hidden><span class="k">Telefono</span><a class="v" href="#" data-phone-link></a></li>
+            <li data-show="whatsapp" hidden><span class="k">WhatsApp</span><a class="v" href="#" data-wa-link target="_blank" rel="noopener">Scrivimi su WhatsApp</a></li>
+            <li data-show="email" hidden><span class="k">Email</span><a class="v" href="#" data-email-link></a></li>
+          </ul>
+          <div class="map" id="map">
+            <button type="button" class="map__load" id="mapLoad">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+              <span>Mostra la mappa</span>
+              <small>Caricando la mappa accetti i cookie di Google Maps</small>
+            </button>
+          </div>
+        </div>
+
+        <form class="contact__form" id="contactForm" novalidate>
+          <div class="field">
+            <input type="text" id="cName" name="name" autocomplete="name" placeholder=" " required>
+            <label for="cName">Nome e cognome</label>
+          </div>
+          <div class="field">
+            <select id="cGoal" name="goal" required>
+              <option value="" selected disabled hidden></option>
+              <option>Personal Training 1:1</option>
+              <option>Coaching Online</option>
+              <option>Dimagrimento e ricomposizione</option>
+              <option>Forza e ipertrofia</option>
+              <option>Preparazione atletica</option>
+              <option>Mobilità e postura</option>
+              <option>Altro / non so ancora</option>
+            </select>
+            <label for="cGoal">Cosa ti interessa?</label>
+          </div>
+          <div class="field">
+            <textarea id="cMsg" name="message" rows="5" placeholder=" "></textarea>
+            <label for="cMsg">Raccontami il tuo obiettivo</label>
+          </div>
+          <label class="check">
+            <input type="checkbox" id="cPrivacy" required>
+            <span>Acconsento al trattamento dei dati per essere ricontattato (GDPR – Reg. UE 2016/679).</span>
+          </label>
+          <button type="submit" class="btn btn--gold btn--block magnetic"><span id="submitLabel">Invia il messaggio</span><i class="arrow"></i></button>
+          <p class="form__note" id="formNote"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <img src="assets/logo.webp" alt="" width="72" height="72" loading="lazy">
+        <div>
+          <b>A<em>·</em>C Personal Trainer</b>
+          <small data-business>A.C. Personal Trainer di Alessandro Caputo</small>
+          <small>P.IVA <span data-vat>03726880838</span> · <span data-city>Cesarò (ME), Sicilia</span></small>
+        </div>
+      </div>
+      <nav class="footer__links" aria-label="Link footer">
+        <a href="#chi-sono">Chi sono</a><a href="#servizi">Servizi</a><a href="#percorso">Percorso</a><a href="#contatti">Contatti</a>
+        <a href="#" data-ig-link target="_blank" rel="noopener">Instagram</a>
+      </nav>
+      <p class="footer__copy">© <span id="year"></span> A.C. Personal Trainer. Tutti i diritti riservati.</p>
+    </div>
+    <div class="footer__giant" aria-hidden="true">A·C</div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/vendor/gsap/gsap.min.js" defer></script>
+  <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+  <script type="module" src="assets/js/scene.js"></script>
+</body>
+</html>

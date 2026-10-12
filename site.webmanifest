@@ -1,0 +1,12 @@
+{
+  "name": "A.C. Personal Trainer",
+  "short_name": "A·C PT",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a0908",
+  "theme_color": "#0a0908",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
