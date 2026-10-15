@@ -8,15 +8,21 @@ import { RoomEnvironment } from '../vendor/three/addons/environments/RoomEnviron
 const canvas = document.getElementById('webgl');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isSmall = () => window.innerWidth < 760;
+const isTouch = window.matchMedia('(hover: none)').matches;
+
+// Resolution budget: retina screens don't need MSAA, and the pixel ratio is capped
+// (and lowered at runtime if the device can't keep up — see adaptQuality()).
+const MAX_DPR = Math.min(window.devicePixelRatio || 1, isTouch ? 1.5 : 1.6);
+let dpr = MAX_DPR;
 
 let renderer;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: (window.devicePixelRatio || 1) < 1.5, alpha: true, powerPreference: 'high-performance', stencil: false });
 } catch (err) {
   window.dispatchEvent(new Event('ac:scene-failed'));
   throw err;
 }
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+renderer.setPixelRatio(dpr);
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -63,10 +69,10 @@ function makeKnurlTexture() {
 }
 const knurl = makeKnurlTexture();
 
-const gold = new THREE.MeshPhysicalMaterial({ color: 0xd8a648, metalness: 1, roughness: 0.2, clearcoat: 0.5, clearcoatRoughness: 0.25 });
-const goldDark = new THREE.MeshPhysicalMaterial({ color: 0x9c7128, metalness: 1, roughness: 0.38 });
+const gold = new THREE.MeshStandardMaterial({ color: 0xd8a648, metalness: 1, roughness: 0.18 });
+const goldDark = new THREE.MeshStandardMaterial({ color: 0x9c7128, metalness: 1, roughness: 0.38 });
 const steel = new THREE.MeshStandardMaterial({ color: 0xc9c3b8, metalness: 1, roughness: 0.32, bumpMap: knurl, bumpScale: 0.6, roughnessMap: knurl });
-const crimson = new THREE.MeshPhysicalMaterial({ color: 0x8f1d1a, metalness: 0.4, roughness: 0.35, clearcoat: 1, emissive: 0x2a0503 });
+const crimson = new THREE.MeshStandardMaterial({ color: 0x8f1d1a, metalness: 0.4, roughness: 0.25, emissive: 0x2a0503 });
 
 /* ---------- Dumbbell ---------- */
 function plateGeometry(R, t) {
@@ -188,28 +194,52 @@ glow.scale.set(7, 7, 1);
 glow.position.z = -2;
 hero.add(glow);
 
-/* ---------- Gold dust ---------- */
-const COUNT = isSmall() ? 650 : 1600;
+/* ---------- Gold dust (animated entirely on the GPU) ---------- */
+const COUNT = isSmall() ? 600 : 1400;
 const pGeo = new THREE.BufferGeometry();
 const pPos = new Float32Array(COUNT * 3);
 const pCol = new Float32Array(COUNT * 3);
 const pSpeed = new Float32Array(COUNT);
-const cGold = new THREE.Color(0xf3d27e), cRed = new THREE.Color(0xff4a30), cPale = new THREE.Color(0xfff2cc);
+const PALETTE = { gold: [0.953, 0.824, 0.494], red: [1, 0.29, 0.188], pale: [1, 0.949, 0.8] };
 for (let i = 0; i < COUNT; i++) {
   pPos[i * 3] = (Math.random() - 0.5) * 24;
   pPos[i * 3 + 1] = (Math.random() - 0.5) * 40;
   pPos[i * 3 + 2] = (Math.random() - 0.5) * 14 - 2;
-  const c = Math.random() < 0.08 ? cRed : Math.random() < 0.3 ? cPale : cGold;
-  pCol.set([c.r, c.g, c.b], i * 3);
+  const c = Math.random() < 0.08 ? PALETTE.red : Math.random() < 0.3 ? PALETTE.pale : PALETTE.gold;
+  pCol.set(c, i * 3);
   pSpeed[i] = 0.2 + Math.random() * 0.8;
 }
 pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
-const dust = new THREE.Points(pGeo, new THREE.PointsMaterial({
-  size: 0.06, sizeAttenuation: true, vertexColors: true, transparent: true, opacity: 0.85,
-  map: radialTexture([[0, 'rgba(255,255,255,1)'], [0.25, 'rgba(255,255,255,.6)'], [1, 'rgba(255,255,255,0)']]),
-  blending: THREE.AdditiveBlending, depthWrite: false
-}));
+pGeo.setAttribute('aColor', new THREE.BufferAttribute(pCol, 3));
+pGeo.setAttribute('aSpeed', new THREE.BufferAttribute(pSpeed, 1));
+const dustMat = new THREE.ShaderMaterial({
+  uniforms: { uOffset: { value: 0 }, uSize: { value: 0.06 }, uScale: { value: 400 }, uOpacity: { value: 0.85 } },
+  vertexShader: `
+    attribute vec3 aColor;
+    attribute float aSpeed;
+    uniform float uOffset, uSize, uScale;
+    varying vec3 vColor;
+    void main() {
+      vec3 p = position;
+      p.y = mod(p.y + uOffset * aSpeed + 20.0, 40.0) - 20.0;
+      vec4 mv = modelViewMatrix * vec4(p, 1.0);
+      gl_Position = projectionMatrix * mv;
+      gl_PointSize = uSize * uScale / -mv.z;
+      vColor = aColor;
+    }`,
+  fragmentShader: `
+    uniform float uOpacity;
+    varying vec3 vColor;
+    void main() {
+      float d = length(gl_PointCoord - 0.5);
+      float a = smoothstep(0.5, 0.0, d);
+      a *= a * uOpacity;
+      gl_FragColor = vec4(vColor * a, a);
+    }`,
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false
+});
+const dust = new THREE.Points(pGeo, dustMat);
+dust.frustumCulled = false;
 scene.add(dust);
 
 /* ---------- Layout ---------- */
@@ -218,6 +248,7 @@ function layout() {
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   renderer.setSize(w, h, false);
+  dustMat.uniforms.uScale.value = h * dpr * 0.5;
   const visH = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
   const visW = visH * camera.aspect;
   if (w < 760) {
@@ -229,7 +260,15 @@ function layout() {
   }
 }
 layout();
-window.addEventListener('resize', () => { layout(); if (reduceMotion) render(); });
+// Mobile browsers fire resize while the URL bar slides in/out during scroll:
+// reallocating the canvas then causes a visible hitch, so ignore height-only jitter.
+let lastW = window.innerWidth, lastH = window.innerHeight, resizeT = 0;
+window.addEventListener('resize', () => {
+  const w = window.innerWidth, h = window.innerHeight;
+  if (isTouch && w === lastW && Math.abs(h - lastH) < 160) return;
+  clearTimeout(resizeT);
+  resizeT = setTimeout(() => { lastW = w; lastH = h; layout(); if (reduceMotion) render(); }, 120);
+});
 
 /* ---------- Interaction state ---------- */
 const pointer = { x: 0, y: 0, sx: 0, sy: 0 };
@@ -255,15 +294,45 @@ window.addEventListener('ac:burst', () => { burst = 1; });
 /* ---------- Render loop ---------- */
 const clock = new THREE.Clock();
 let running = true;
+const ticker = window.gsap && window.gsap.ticker;
 document.addEventListener('visibilitychange', () => {
   running = !document.hidden;
-  if (running && !reduceMotion) { clock.getDelta(); requestAnimationFrame(tick); }
+  if (running) clock.getDelta();                 // don't jump after a hidden tab
+  if (running && !reduceMotion && !ticker) requestAnimationFrame(tick);
 });
 
 const easeOut = (t) => 1 - Math.pow(1 - t, 4);
 
+// Scroll-driven values are eased a little so the 3D motion glides instead of
+// stepping with each wheel tick.
+const sm = { travel: 0, pin: 0, exit: 0, init: false };
+function smoothState(src, dt) {
+  if (!sm.init) { sm.travel = src.travel; sm.pin = src.pin; sm.exit = src.exit; sm.init = true; }
+  const k = 1 - Math.exp(-dt * 9);
+  sm.travel += (src.travel - sm.travel) * k;
+  sm.pin += (src.pin - sm.pin) * k;
+  sm.exit += (src.exit - sm.exit) * k;
+  return sm;
+}
+
+// Lower the resolution step by step if frames take too long (weak GPUs).
+let sampleT = 0, sampleN = 0, warmup = 2.5;
+function adaptQuality(dt) {
+  if (warmup > 0) { warmup -= dt; return; }
+  sampleT += dt; sampleN++;
+  if (sampleN < 50) return;
+  const avg = sampleT / sampleN;
+  sampleT = 0; sampleN = 0;
+  if (avg > 1 / 45 && dpr > 1) {
+    dpr = Math.max(1, dpr - 0.25);
+    renderer.setPixelRatio(dpr);
+    layout();
+  }
+}
+
 function render() {
   const dt = Math.min(clock.getDelta(), 0.05);
+  if (!reduceMotion) adaptQuality(dt);
   const t = clock.elapsedTime;
   const vh = window.innerHeight;
   const scroll = window.scrollY / vh;             // 0 → 1 across the hero
@@ -273,14 +342,15 @@ function render() {
   if (introStarted && introT < 1) introT = Math.min(1, introT + dt * 0.55);
   const ie = easeOut(introT);
 
-  pointer.sx += (pointer.x - pointer.sx) * 0.05;
-  pointer.sy += (pointer.y - pointer.sy) * 0.05;
+  const kp = 1 - Math.exp(-dt * 3);               // frame-rate independent easing
+  pointer.sx += (pointer.x - pointer.sx) * kp;
+  pointer.sy += (pointer.y - pointer.sy) * kp;
 
   // Choreography driven by main.js (window.AC_STATE):
   //   travel 0→1  dumbbell glides from the hero to the centre of the screen
   //   pin    0→1  pinned manifesto: rotation + exploded view
   //   exit   0→1  flies away after the manifesto
-  const st = window.AC_STATE;
+  const st = window.AC_STATE ? smoothState(window.AC_STATE, dt) : null;
   const smooth = (v) => v * v * (3 - 2 * v);
   const spin = reduceMotion ? 0 : t * 0.35;
   let x, y, sc, fade, explode = 0, pin = 0;
@@ -337,19 +407,10 @@ function render() {
 
   // dust: drift up, parallax with scroll, burst on quiz result
   burst = Math.max(0, burst - dt * 0.6);
-  if (!reduceMotion) {
-    const arr = pGeo.attributes.position.array;
-    const speed = (0.15 + burst * 4 + (camera.userData.dolly || 0) * 1.2) * dt;
-    for (let i = 0; i < COUNT; i++) {
-      const iy = i * 3 + 1;
-      arr[iy] += pSpeed[i] * speed;
-      if (arr[iy] > 20) arr[iy] = -20;
-    }
-    pGeo.attributes.position.needsUpdate = true;
-  }
+  if (!reduceMotion) dustMat.uniforms.uOffset.value += (0.15 + burst * 4 + (camera.userData.dolly || 0) * 1.2) * dt;
   dust.position.y = scroll * 2.2;
   dust.rotation.y = pointer.sx * 0.08 + (reduceMotion ? 0 : t * 0.01);
-  dust.material.opacity = 0.85 * (0.35 + 0.65 * ie);
+  dustMat.uniforms.uOpacity.value = 0.85 * (0.35 + 0.65 * ie);
 
   camera.position.z = 9 - (camera.userData.dolly || 0) * 1.4;
   camera.position.x = pointer.sx * 0.3;
@@ -362,13 +423,16 @@ function render() {
 function tick() {
   if (!running) return;
   render();
-  requestAnimationFrame(tick);
+  if (!ticker) requestAnimationFrame(tick);
 }
 
 render();
 window.dispatchEvent(new Event('ac:scene-ready'));
 if (reduceMotion) {
   window.addEventListener('scroll', render, { passive: true });
+} else if (ticker) {
+  // Same frame clock as Lenis + ScrollTrigger: scroll position and 3D stay in sync.
+  ticker.add(tick);
 } else {
   requestAnimationFrame(tick);
 }
