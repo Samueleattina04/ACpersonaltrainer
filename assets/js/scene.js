@@ -4,6 +4,7 @@
    ========================================================================== */
 import * as THREE from 'three';
 import { RoomEnvironment } from '../vendor/three/addons/environments/RoomEnvironment.js';
+import { createGladiator } from './gladiator.js?v=5';
 
 const canvas = document.getElementById('webgl');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -135,7 +136,9 @@ dumbbell.rotation.z = Math.PI / 2;
 
 const hero = new THREE.Group();
 const dbPivot = new THREE.Group();
-dbPivot.add(dumbbell);
+// The gladiator (inspired by the logo) holds the gold dumbbell and curls it.
+const gladiator = createGladiator({ gold, goldDark, crimson, dumbbell });
+dbPivot.add(gladiator.group);
 hero.add(dbPivot);
 scene.add(hero);
 
@@ -352,7 +355,7 @@ function render() {
   //   exit   0→1  flies away after the manifesto
   const st = window.AC_STATE ? smoothState(window.AC_STATE, dt) : null;
   const smooth = (v) => v * v * (3 - 2 * v);
-  const spin = reduceMotion ? 0 : t * 0.35;
+  const sway = reduceMotion ? 0 : Math.sin(t * 0.35) * 0.28;   // slow 3/4 turn, face stays visible
   let x, y, sc, fade, explode = 0, pin = 0;
   const hx = base.x + pointer.sx * 0.25;
   const hy = base.y + Math.sin(t * 0.8) * 0.08 + pointer.sy * 0.15;
@@ -367,8 +370,8 @@ function render() {
     y = THREE.MathUtils.lerp(hy, Math.sin(t * 0.8) * 0.05, tr) + ex * ex * 5;
     sc = THREE.MathUtils.lerp(base.s, cs, tr) * (0.4 + 0.6 * ie) * (1 - ex * 0.45);
     fade = 1 - ex;
-    dbPivot.rotation.y = spin + (1 - ie) * -4 + tr * Math.PI + pin * Math.PI * 2 + pointer.sx * 0.6;
-    dbPivot.rotation.x = 0.35 + pointer.sy * -0.4 + tr * 0.25 + explode * 0.35 + ex * 1.2;
+    dbPivot.rotation.y = -0.42 + sway + (1 - ie) * -2.4 + pin * Math.PI * 2 + pointer.sx * 0.45;
+    dbPivot.rotation.x = 0.04 + pointer.sy * -0.08 + ex * 0.5;
   } else {
     // fallback (no GSAP / reduced motion): simple exit with the hero
     const heroP = THREE.MathUtils.clamp(scroll, 0, 1.4);
@@ -376,25 +379,26 @@ function render() {
     y = hy + heroP * 3.2;
     sc = base.s * (0.4 + 0.6 * ie) * (1 - heroP * 0.35);
     fade = 1 - heroP / 1.35;
-    dbPivot.rotation.y = spin + (1 - ie) * -4 + heroP * 3 + pointer.sx * 0.6;
-    dbPivot.rotation.x = 0.35 + pointer.sy * -0.4 + heroP * 0.8;
+    dbPivot.rotation.y = -0.42 + sway + (1 - ie) * -2.4 + heroP * 1.2 + pointer.sx * 0.45;
+    dbPivot.rotation.x = 0.04 + pointer.sy * -0.08 + heroP * 0.3;
   }
   fade = THREE.MathUtils.clamp(fade, 0, 1);
   hero.position.set(x, y, 0);
   hero.scale.setScalar(sc);
   hero.visible = fade > 0.01;
-  dbPivot.rotation.z = -0.25 + Math.sin(t * 0.5) * 0.06;
+  dbPivot.rotation.z = Math.sin(t * 0.5) * 0.02;
+  gladiator.update(t, dt, { px: pointer.sx, py: pointer.sy, explode, still: reduceMotion });
 
   // exploded view: every piece slides out along the bar
   for (const m of parts) {
     const { baseY, side, k } = m.userData.explode;
-    m.position.y = baseY + side * k * explode * 0.62;
+    m.position.y = baseY + side * k * explode * 1.1;
     m.position.x = Math.sin(k * 5) * explode * 0.12;
   }
 
   rings.rotation.z = (reduceMotion ? 0 : t * 0.08) + pin * Math.PI;
-  rings.rotation.x = 0.2 + pointer.sy * 0.25 + explode * 0.5;
-  rings.rotation.y = -0.35 + pointer.sx * 0.35 - explode * 0.4;
+  rings.rotation.x = 0.08 + pointer.sy * 0.2 + explode * 0.5;
+  rings.rotation.y = -0.2 + pointer.sx * 0.3 - explode * 0.4;
   rings.scale.setScalar(1 + explode * 0.35);
   ringMat.opacity = 0.9 * ie * fade;
   dashMat.opacity = 0.55 * ie * fade;

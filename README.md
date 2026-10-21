@@ -10,8 +10,8 @@ Instagram: [@a.c._personal_trainer](https://www.instagram.com/a.c._personal_trai
 |---|---|
 | Struttura | HTML5 semantico (una pagina, SEO + dati strutturati Schema.org) |
 | Stile | CSS3 puro (custom properties, 3D transforms, responsive mobile-first) |
-| 3D | [Three.js](https://threejs.org) r169: manubrio in oro, anelli a scudo, polvere d'oro |
-| Animazioni | [GSAP 3](https://gsap.com) + ScrollTrigger: manifesto fissato con il manubrio che si smonta, testi lettera per lettera |
+| 3D | [Three.js](https://threejs.org) r169: gladiatore animato ispirato al logo (curl con manubrio d'oro), anelli a scudo, polvere d'oro |
+| Animazioni | [GSAP 3](https://gsap.com) + ScrollTrigger: manifesto fissato con il gladiatore che ruota, l'elmo che si solleva e il manubrio che si smonta, testi lettera per lettera |
 | Scroll | [Lenis](https://lenis.darkroom.engineering) per lo scroll fluido con inerzia |
 | Logica | JavaScript vanilla (quiz, modulo contatti, effetti tilt/magnetici) |
 | Font | Cinzel, Manrope, Cormorant Garamond, ospitati in locale (nessuna chiamata a Google) |
@@ -31,6 +31,7 @@ assets/
   js/config.js        ← CONTATTI DA MODIFICARE
   js/main.js          Interazioni, quiz, modulo, animazioni
   js/scene.js         Scena 3D Three.js
+  js/gladiator.js     Gladiatore 3D procedurale (elmo, cresta, fascia, curl)
   fonts/              Font woff2
   vendor/             three.js, gsap, lenis
   logo.webp, og-image.jpg, icone
